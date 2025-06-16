@@ -54,6 +54,7 @@
     path: "{{spellbook_network_manager_dir}}/{{ ansible_default_ipv4.interface }}.nmconnection"
     state: present
     regexp: '^dns-search='
+    insertafter: '^\[ipv4\]'
     line: "dns-search={{ spellbook_domain_name_options_search | join(';') }}"
   notify: 
     - Reload NetworkManager
