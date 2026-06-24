@@ -59,6 +59,8 @@ ansible-playbook -i inventory/mycluster/hosts.yml remove-node.yml -b -v \
 --extra-vars "node=nodename,nodename2"
 ```
 
+> Note: The playbook does not currently support the removal of the first control plane or etcd node. These nodes are essential for maintaining cluster operations and must remain intact.
+
 If a node is completely unreachable by ssh, add `--extra-vars reset_nodes=false`
 to skip the node reset step. If one node is unavailable, but others you wish
 to remove are able to connect via SSH, you could set `reset_nodes=false` as a host
@@ -80,32 +82,6 @@ authentication. One can get a kubeconfig from kube_control_plane hosts
 
 For more information on kubeconfig and accessing a Kubernetes cluster, refer to
 the Kubernetes [documentation](https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters/).
-
-## Accessing Kubernetes Dashboard
-
-Supported version is kubernetes-dashboard v2.0.x :
-
-- Login option : token/kubeconfig by default
-- Deployed by default in "kube-system" namespace, can be overridden with `dashboard_namespace: kubernetes-dashboard` in inventory,
-- Only serves over https
-
-Access is described in [dashboard docs](https://github.com/kubernetes/dashboard/tree/master/docs/user/accessing-dashboard). With kubespray's default deployment in kube-system namespace, instead of kubernetes-dashboard :
-
-- Proxy URL is <http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#/login>
-- kubectl commands must be run with "-n kube-system"
-
-Accessing through Ingress is highly recommended. For proxy access, please note that proxy must listen to [localhost](https://github.com/kubernetes/dashboard/issues/692#issuecomment-220492484) (`proxy  --address="x.x.x.x"` will not work)
-
-For token authentication, guide to create Service Account is provided in [dashboard sample user](https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/creating-sample-user.md) doc. Still take care of default namespace.
-
-Access can also by achieved via ssh tunnel on a control plane :
-
-```bash
-# localhost:8081 will be sent to control-plane-1's own localhost:8081
-ssh -L8001:localhost:8001 user@control-plane-1
-sudo -i
-kubectl proxy
-```
 
 ## Accessing Kubernetes API
 

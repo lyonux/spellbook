@@ -6,7 +6,6 @@
   * [Downloads](/docs/advanced/downloads.md)
   * [Gcp-lb](/docs/advanced/gcp-lb.md)
   * [Kubernetes-reliability](/docs/advanced/kubernetes-reliability.md)
-  * [Mitogen](/docs/advanced/mitogen.md)
   * [Netcheck](/docs/advanced/netcheck.md)
   * [Ntp](/docs/advanced/ntp.md)
   * [Proxy](/docs/advanced/proxy.md)
@@ -23,7 +22,6 @@
   * [Aws](/docs/cloud_providers/aws.md)
   * [Azure](/docs/cloud_providers/azure.md)
   * [Cloud](/docs/cloud_providers/cloud.md)
-  * [Equinix-metal](/docs/cloud_providers/equinix-metal.md)
 * CNI
   * [Calico](/docs/CNI/calico.md)
   * [Cilium](/docs/CNI/cilium.md)
@@ -33,7 +31,6 @@
   * [Kube-router](/docs/CNI/kube-router.md)
   * [Macvlan](/docs/CNI/macvlan.md)
   * [Multus](/docs/CNI/multus.md)
-  * [Weave](/docs/CNI/weave.md)
 * CRI
   * [Containerd](/docs/CRI/containerd.md)
   * [Cri-o](/docs/CRI/cri-o.md)
@@ -52,9 +49,7 @@
   * [Test Cases](/docs/developers/test_cases.md)
   * [Vagrant](/docs/developers/vagrant.md)
 * External Storage Provisioners
-  * [Cephfs Provisioner](/docs/external_storage_provisioners/cephfs_provisioner.md)
   * [Local Volume Provisioner](/docs/external_storage_provisioners/local_volume_provisioner.md)
-  * [Rbd Provisioner](/docs/external_storage_provisioners/rbd_provisioner.md)
   * [Scheduler Plugins](/docs/external_storage_provisioners/scheduler_plugins.md)
 * Getting Started
   * [Comparisons](/docs/getting_started/comparisons.md)
@@ -62,13 +57,11 @@
   * [Setting-up-your-first-cluster](/docs/getting_started/setting-up-your-first-cluster.md)
 * Ingress
   * [Alb Ingress Controller](/docs/ingress/alb_ingress_controller.md)
-  * [Ingress Nginx](/docs/ingress/ingress_nginx.md)
   * [Kube-vip](/docs/ingress/kube-vip.md)
   * [Metallb](/docs/ingress/metallb.md)
 * Operating Systems
   * [Amazonlinux](/docs/operating_systems/amazonlinux.md)
   * [Bootstrap-os](/docs/operating_systems/bootstrap-os.md)
-  * [Centos](/docs/operating_systems/centos.md)
   * [Fcos](/docs/operating_systems/fcos.md)
   * [Flatcar](/docs/operating_systems/flatcar.md)
   * [Kylinlinux](/docs/operating_systems/kylinlinux.md)
@@ -83,6 +76,7 @@
   * [Ha-mode](/docs/operations/ha-mode.md)
   * [Hardening](/docs/operations/hardening.md)
   * [Integration](/docs/operations/integration.md)
+  * [Kernel-requirements](/docs/operations/kernel-requirements.md)
   * [Large-deployments](/docs/operations/large-deployments.md)
   * [Mirror](/docs/operations/mirror.md)
   * [Nodes](/docs/operations/nodes.md)

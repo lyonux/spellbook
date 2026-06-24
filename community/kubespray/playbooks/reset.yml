@@ -3,7 +3,7 @@
   import_playbook: boilerplate.yml
 
 - name: Gather facts
-  import_playbook: facts.yml
+  import_playbook: internal_facts.yml
 
 - name: Reset cluster
   hosts: etcd:k8s_cluster:calico_rr
@@ -30,6 +30,6 @@
 
   environment: "{{ proxy_disable_env }}"
   roles:
-    - { role: kubespray-defaults}
+    - { role: kubespray_defaults}
     - { role: kubernetes/preinstall, when: "dns_mode != 'none' and resolvconf_mode == 'host_resolvconf'", tags: resolvconf, dns_early: true }
     - { role: reset, tags: reset }

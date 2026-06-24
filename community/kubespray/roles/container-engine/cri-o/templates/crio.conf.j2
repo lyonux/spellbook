@@ -155,17 +155,9 @@ cgroup_manager = "{{ crio_cgroup_manager }}"
 # only the capabilities defined in the containers json file by the user/kube
 # will be added.
 default_capabilities = [
-	"CHOWN",
-	"DAC_OVERRIDE",
-	"FSETID",
-	"FOWNER",
-	"NET_RAW",
-	"SETGID",
-	"SETUID",
-	"SETPCAP",
-	"NET_BIND_SERVICE",
-	"SYS_CHROOT",
-	"KILL",
+{%- for item in crio_default_capabilities %}
+        "{{ item }}",
+{%- endfor %}
 ]
 
 # List of default sysctls. If it is empty or commented out, only the sysctls
@@ -212,7 +204,7 @@ default_mounts = [
 # limit is never exceeded.
 log_size_max = -1
 
-# Whether container output should be logged to journald in addition to the kuberentes log file
+# Whether container output should be logged to journald in addition to the kubernetes log file
 log_to_journald = false
 
 # Path to directory in which container exit files are written to by conmon.
@@ -356,6 +348,12 @@ signature_policy = "{{ crio_signature_policy }}"
 # ignore; the latter will ignore volumes entirely.
 image_volumes = "mkdir"
 
+# The timeout for an image pull to make progress until the pull operation gets
+# canceled. This value will be also used for calculating the pull progress interval
+# to pull_progress_timeout / 10. Can be set to 0 to disable the timeout as well as
+# the progress output.
+pull_progress_timeout = "{{ crio_pull_progress_timeout }}"
+
 # The crio.network table containers settings pertaining to the management of
 # CNI plugins.
 [crio.network]
@@ -382,7 +380,7 @@ enable_metrics = {{ crio_enable_metrics | bool | lower }}
 # The port on which the metrics server will listen.
 metrics_port = {{ crio_metrics_port }}
 
-{% if nri_enabled and crio_version is version('v1.26.0', operator='>=') %}
+{% if nri_enabled and crio_version is version('1.26.0', operator='>=') %}
 [crio.nri]
 
 enable_nri=true

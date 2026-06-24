@@ -72,7 +72,7 @@ spec:
           initialDelaySeconds: 90
           periodSeconds: 10
         name: calico-apiserver
-{% if calico_version is version('v3.28.0', '>=') %}
+{% if calico_version is version('3.28.0', '>=') %}
         readinessProbe:
           httpGet:
             path: /readyz
@@ -177,6 +177,9 @@ rules:
   - blockaffinities
   - caliconodestatuses
   - tiers
+  - stagednetworkpolicies
+  - stagedglobalnetworkpolicies
+  - stagedkubernetesnetworkpolicies
   verbs:
   - get
   - list
@@ -184,7 +187,7 @@ rules:
   - create
   - update
   - delete
-{% if calico_version is version('v3.28.0', '>=') %}
+{% if calico_version is version('3.28.0', '>=') %}
 - apiGroups:
   - policy
   resourceNames:
@@ -235,6 +238,8 @@ rules:
   resources:
   - mutatingwebhookconfigurations
   - validatingwebhookconfigurations
+  - validatingadmissionpolicies        # Required for Kubernetes 1.33+
+  - validatingadmissionpolicybindings  # Required for Kubernetes 1.33+
   verbs:
   - get
   - list

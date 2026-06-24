@@ -4,6 +4,8 @@ images_dir: /images/base
 docker_user: kubespray+buildvmimages
 docker_host: quay.io
 registry: quay.io/kubespray
+kubevirt_images_push: true
+kubevirt_images_selected: []
 
 images:
   ubuntu-2004:
@@ -55,6 +57,20 @@ images:
     converted: true
     tag: "latest"
 
+  fedora-41:
+    filename: Fedora-Cloud-Base-Generic-41-1.4.x86_64.qcow2
+    url: https://download.fedoraproject.org/pub/fedora/linux/releases/41/Cloud/x86_64/images/Fedora-Cloud-Base-Generic-41-1.4.x86_64.qcow2
+    checksum: sha256:6205ae0c524b4d1816dbd3573ce29b5c44ed26c9fbc874fbe48c41c89dd0bac2
+    converted: true
+    tag: "latest"
+
+  fedora-42:
+    filename: Fedora-Cloud-Base-Generic-42-1.1.x86_64.qcow2
+    url: https://download.fedoraproject.org/pub/fedora/linux/releases/42/Cloud/x86_64/images/Fedora-Cloud-Base-Generic-42-1.1.x86_64.qcow2
+    checksum: sha256:e401a4db2e5e04d1967b6729774faa96da629bcf3ba90b67d8d9cce9906bec0f
+    converted: true
+    tag: "latest"
+
   fedora-coreos:
     filename: fedora-coreos-32.20200601.3.0-openstack.x86_64.qcow2.xz
     url: https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/32.20200601.3.0/x86_64/fedora-coreos-32.20200601.3.0-openstack.x86_64.qcow2.xz
@@ -76,6 +92,13 @@ images:
     converted: true
     tag: "latest"
 
+  almalinux-9:
+    filename: AlmaLinux-9-GenericCloud-9.5-20241120.x86_64.qcow2
+    url: https://repo.almalinux.org/almalinux/9.5/cloud/x86_64/images/AlmaLinux-9-GenericCloud-9.5-20241120.x86_64.qcow2
+    checksum: sha256:abddf01589d46c841f718cec239392924a03b34c4fe84929af5d543c50e37e37
+    converted: true
+    tag: "latest"
+
   rockylinux-8:
     filename: Rocky-8-GenericCloud-8.6-20220515.x86_64.qcow2
     url: https://download.rockylinux.org/pub/rocky/8.6/images/Rocky-8-GenericCloud-8.6-20220515.x86_64.qcow2
@@ -89,6 +112,17 @@ images:
     checksum: sha256:069493fdc807300a22176540e9171fcff2227a92b40a7985a0c1c9e21aeebf57
     converted: true
     tag: "latest"
+
+  rockylinux-10:
+    filename: Rocky-10-GenericCloud-Base-10.0-20250609.1.x86_64.qcow2
+    url: https://download.rockylinux.org/pub/rocky/10.0/images/x86_64/Rocky-10-GenericCloud-Base-10.0-20250609.1.x86_64.qcow2
+    checksum: sha256:20e771c654724e002c32fb92a05fdfdd7ac878c192f50e2fc21f53e8f098b8f9
+    converted: true
+    tag: "latest"
+
+  # rockylinux-10-extra:
+  #   default cloud image doesn't included `kernel-modules-extra`. How to build RockyLinux 10 + `kernel-module-extra` with dib
+  #   https://github.com/kubernetes-sigs/kubespray/pull/12355#issuecomment-3705400093
 
   debian-10:
     filename: debian-10-openstack-amd64.qcow2
@@ -111,6 +145,13 @@ images:
     converted: true
     tag: "latest"
 
+  debian-13:
+    filename: debian-13-generic-amd64-20250806-2196.qcow2
+    url: https://cdimage.debian.org/cdimage/cloud/trixie/20250806-2196/debian-13-generic-amd64-20250806-2196.qcow2
+    checksum: sha512:a7dfe434afc40afb0a791c777f3edba6b1a5c4b7315a61073fe5e34752d3bc5fd44ff67ef054eb4263687a97f7ce4896bf5bad5f216ef8b9d4a84541759e743d
+    converted: true
+    tag: "latest"
+
   oracle-7:
     filename: oracle-linux-76.qcow2
     url: https://storage.googleapis.com/born-images/oracle76/oracle-linux-76.qcow2
@@ -122,6 +163,13 @@ images:
     filename: openSUSE-Leap-15.3.x86_64-1.0.1-NoCloud-Build2.63.qcow2
     url: https://download.opensuse.org/repositories/Cloud:/Images:/Leap_15.3/images/openSUSE-Leap-15.3.x86_64-1.0.1-NoCloud-Build2.63.qcow2
     checksum: sha256:289248945e2d058551c71c1bdcb31a361cefe7136c7fd88a09b524eedfaf5215
+    converted: true
+    tag: "latest"
+
+  opensuse-leap-15-6:
+    filename: openSUSE-Leap-15.6.x86_64-1.0.1-NoCloud-Build1.177.qcow2
+    url: https://download.opensuse.org/repositories/Cloud:/Images:/Leap_15.6/images/openSUSE-Leap-15.6.x86_64-1.0.1-NoCloud-Build1.177.qcow2
+    checksum: sha256:9ecd197b34faf1b43627946d0c26e38b5c3058207d1c86c4784b8f765c3289f3
     converted: true
     tag: "latest"
 
@@ -138,3 +186,10 @@ images:
     checksum: sha256:c6af522d36d659b66da668cc4eb86b032a9cff05a95a0e37505a63e70ed585dc
     converted: true
     tag: "latest"
+
+  flatcar-4081:
+    filename: flatcar_production_kubevirt_image.qcow2
+    url: https://stable.release.flatcar-linux.net/amd64-usr/4081.2.1/flatcar_production_kubevirt_image.qcow2
+    checksum: sha512:6999ef068380c9842e4caf7afc2a1c66d4d03309f7bfa2f5f500757c36d1f935961f5662cc69376aa3d701e4c2d264f4356d4daadbb68e55becb710067e22c5d
+    converted: true
+    tag: latest

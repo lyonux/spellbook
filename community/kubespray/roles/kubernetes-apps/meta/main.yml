@@ -1,5 +1,7 @@
 ---
 dependencies:
+  - role: kubernetes-apps/utils
+
   - role: kubernetes-apps/ansible
     when:
       - inventory_hostname == groups['kube_control_plane'][0]
@@ -9,12 +11,6 @@ dependencies:
       - helm_enabled
     tags:
       - helm
-
-  - role: kubernetes-apps/krew
-    when:
-      - krew_enabled
-    tags:
-      - krew
 
   - role: kubernetes-apps/registry
     when:
@@ -103,12 +99,12 @@ dependencies:
     tags:
       - container_engine_accelerator
 
-  - role: kubernetes-apps/gateway_api
+  - role: kubernetes-apps/kubelet-csr-approver
     when:
-      - gateway_api_enabled
+      - kubelet_csr_approver_enabled
       - inventory_hostname == groups['kube_control_plane'][0]
     tags:
-      - gateway_api
+      - kubelet-csr-approver
 
   - role: kubernetes-apps/metallb
     when:
@@ -127,7 +123,7 @@ dependencies:
   - role: kubernetes-apps/scheduler_plugins
     when:
       - scheduler_plugins_enabled
-      - kube_major_version is version('v1.29', '<')
+      - kube_major_version is version('1.29', '<')
       - inventory_hostname == groups['kube_control_plane'][0]
     tags:
       - scheduler_plugins
