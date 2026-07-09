@@ -19,7 +19,7 @@ install_dependency:
 	yum install rhel-system-roles -y
 
 pip_compile:
-    pip-compile --index-url=https://pypi.tuna.tsinghua.edu.cn/simple/ --no-emit-index-url requirements.in
+    uv lock --index-url=https://pypi.tuna.tsinghua.edu.cn/simple/
 
 submodule_update:
 	./manage.sh submodule_update

@@ -7,7 +7,6 @@ set -o pipefail
 ROOT_DIR="$(dirname "${BASH_SOURCE[0]}")"
 KUBE_DIR="${ROOT_DIR}/.kube"
 VENV_DIR="${ROOT_DIR}/.venv"
-VENV_CHECKSUM_FILE="${VENV_DIR}/requirements.sum"
 VENV_ACTIVATE_MITOGEN=$(cat <<EOF
 ANSIBLE_STRATEGY="mitogen_linear"
 ANSIBLE_STRATEGY_PLUGINS="\$(python -c 'print(__import__("pkg_resources").resource_filename("ansible_mitogen", "plugins/strategy"))')"
@@ -41,35 +40,25 @@ submodule_init() {
   fi
 }
 
+# Ensure uv is installed
+ensure_uv() {
+  if ! command -v uv &> /dev/null; then
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    export PATH="${HOME}/.local/bin:${PATH}"
+  fi
+}
+
 venv_prepare() {
-  if ! "${VENV_DIR}/bin/python" --version &> /dev/null; then
-    rm -rf "${VENV_DIR}"
-    python3 -m venv "${VENV_DIR}"
-    "${VENV_DIR}/bin/pip" install pip-tools
+  ensure_uv
+  if [ ! -d "${VENV_DIR}" ]; then
+    uv venv "${VENV_DIR}"
   fi
   printf '%s\n' "$VENV_ACTIVATE_MITOGEN" > "${VENV_DIR}/bin/activate-mitogen"
 }
 
-venv_checksum() {
-  files=("requirements.in" "requirements.txt")
-  if [ -n "$(command -v shasum)" ]; then
-    (cd "${ROOT_DIR}" && shasum -a 256 "${files[@]}")
-  else
-    (cd "${ROOT_DIR}" && sha256sum "${files[@]}")
-  fi
-}
-
 venv_install() {
-  VENV_CHECKSUM="$(cat 2>/dev/null "${VENV_CHECKSUM_FILE}" || true)"
-  if [ "$(venv_checksum)" != "${VENV_CHECKSUM}" ]; then
-      "${VENV_DIR}/bin/pip" install pip=="21.0.1" -i https://pypi.tuna.tsinghua.edu.cn/simple
-      "${VENV_DIR}/bin/python3" -m pip install --upgrade pip
-      "${VENV_DIR}/bin/pip-compile" --index-url=https://pypi.tuna.tsinghua.edu.cn/simple/ --no-emit-index-url requirements.in
-      "${VENV_DIR}/bin/pip" install -r "${ROOT_DIR}/requirements.txt"
-      "${VENV_DIR}/bin/pip-compile" --no-emit-index-url requirements.in
-      "${VENV_DIR}/bin/pip-sync"
-      venv_checksum > "${VENV_CHECKSUM_FILE}"
-  fi
+  # uv sync handles dependencies automatically using uv.lock
+  uv sync --index-url https://pypi.tuna.tsinghua.edu.cn/simple/
 }
 
 venv_activate() {

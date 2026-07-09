@@ -1,0 +1,7 @@
+---
+containerd_registries_mirrors:
+    - prefix: "{{ registry_host }}"
+      mirrors:
+          - host: http://{{ registry_host }}
+            capabilities: ["pull", "resolve"]
+            skip_verify: true

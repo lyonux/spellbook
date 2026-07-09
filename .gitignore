@@ -113,6 +113,12 @@ ipython_config.py
 .pdm-python
 .pdm-build/
 
+# uv
+#   UV is a modern Python package manager. We commit uv.lock to ensure reproducibility.
+#   https://github.com/astral-sh/uv
+.uv/
+.python-version
+
 # PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
 __pypackages__/
 

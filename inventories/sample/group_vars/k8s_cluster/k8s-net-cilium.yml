@@ -87,7 +87,7 @@ cilium_deploy_additionally: false
 # You wil also have to specify the variable `cilium_native_routing_cidr` to
 # make this work. Please refer to the cilium documentation for more
 # information about this kind of setups.
-cilium_auto_direct_node_routes: false 
+cilium_auto_direct_node_routes: false
 
 # Allows to explicitly specify the IPv4 CIDR for native routing.
 # When specified, Cilium assumes networking for this CIDR is preconfigured and
@@ -103,7 +103,6 @@ cilium_native_routing_cidr: "192.168.2.0/24"
 
 # Allows to explicitly specify the IPv6 CIDR for native routing.
 # cilium_native_routing_cidr_ipv6: ""
-
 
 # Enable transparent network encryption.
 cilium_encryption_enabled: false
@@ -263,93 +262,116 @@ cilium_enable_bgp_control_plane: true
 
 # -- Configure BGP Instances (New bgpv2 API v1.16+)
 cilium_bgp_cluster_configs:
-  - name: "cilium-bgp"
-    spec:
-      bgpInstances:
-      - name: "instance-{{ spellbook_global_asn }}"
-        localASN: "{{ spellbook_global_asn }}"
-        peers:
-        - name: "peer-{{ spellbook_global_asn }}-tor1"
-          peerASN: "{{ spellbook_global_asn }}"
-          peerAddress: '{{ ansible_default_ipv4.gateway|ansible.utils.ipmath(+252) }}'
-          peerConfigRef:
-            name: "cilium-peer"
-      nodeSelector:
-        matchExpressions:
-          - {key: somekey, operator: NotIn, values: ['never-used-value']}
+    - name: "cilium-bgp"
+      spec:
+          bgpInstances:
+              - name: "instance-{{ spellbook_global_asn }}"
+                localASN: "{{ spellbook_global_asn }}"
+                peers:
+                    - name: "peer-{{ spellbook_global_asn }}-tor1"
+                      peerASN: "{{ spellbook_global_asn }}"
+                      peerAddress: "{{ ansible_default_ipv4.gateway }}"
+                      peerConfigRef:
+                          name: "cilium-peer"
+                    - name: "peer-{{ spellbook_global_asn }}-tor1"
+                      peerASN: "{{ spellbook_global_asn }}"
+                      peerAddress: "{{ ansible_default_ipv4.gateway|ansible.utils.ipmath(-1) }}"
+                      peerConfigRef:
+                          name: "cilium-peer"
+          nodeSelector:
+              matchExpressions:
+                  - {
+                        key: somekey,
+                        operator: NotIn,
+                        values: ["never-used-value"],
+                    }
 
 # -- Configure BGP Peers (New bgpv2 API v1.16+)
 cilium_bgp_peer_configs:
-  - name: cilium-peer
-    spec:
-      # authSecretRef: bgp-auth-secret
-      gracefulRestart:
-        enabled: true
-        restartTimeSeconds: 15
-      families:
-        - afi: ipv4
-          safi: unicast
-          advertisements:
-            matchLabels:
-              advertise: "bgp"
-        - afi: ipv6
-          safi: unicast
-          advertisements:
-            matchLabels:
-              advertise: "bgp"
+    - name: cilium-peer
+      spec:
+          # authSecretRef: bgp-auth-secret
+          gracefulRestart:
+              enabled: true
+              restartTimeSeconds: 15
+          families:
+              - afi: ipv4
+                safi: unicast
+                advertisements:
+                    matchLabels:
+                        advertise: "bgp"
+              - afi: ipv6
+                safi: unicast
+                advertisements:
+                    matchLabels:
+                        advertise: "bgp"
 
 # -- Configure BGP Advertisements (New bgpv2 API v1.16+)
 cilium_bgp_advertisements:
-  - name: bgp-advertisements
-    labels:
-      advertise: bgp
-    spec:
-      advertisements:
-        - advertisementType: "CiliumPodIPPool"
-          selector:
-            matchExpressions:
-                - {key: advertisement, operator: NotIn, values: ['no']}
-        - advertisementType: "Service"
-          service:
-            addresses:
-              - ClusterIP
-              - ExternalIP
-              - LoadBalancerIP
-          selector:
-            matchExpressions:
-                - {key: somekey, operator: NotIn, values: ['never-used-value']}
+    - name: bgp-advertisements
+      labels:
+          advertise: bgp
+      spec:
+          advertisements:
+              - advertisementType: "CiliumPodIPPool"
+                selector:
+                    matchExpressions:
+                        - {
+                              key: advertisement,
+                              operator: NotIn,
+                              values: ["no"],
+                          }
+              - advertisementType: "Service"
+                service:
+                    addresses:
+                        - ClusterIP
+                        - ExternalIP
+                        - LoadBalancerIP
+                selector:
+                    matchExpressions:
+                        - {
+                              key: somekey,
+                              operator: NotIn,
+                              values: ["never-used-value"],
+                          }
 
 # -- Configure BGP Node Config Overrides (New bgpv2 API v1.16+)
 cilium_bgp_node_config_overrides:
-  - name: bgp-node-config-override
-    spec:
-    bgpInstances:
-      - name: "instance-{{ spellbook_global_asn }}"
-        routerID: "192.168.2.2s"
-        localPort: 1790
-        peers:
-          - name: "peer-{{ spellbook_global_asn }}-tor1"
-            localAddress: fd00:10:0:2::2
+    - name: bgp-node-config-override
+      spec:
+      bgpInstances:
+          - name: "instance-{{ spellbook_global_asn }}"
+            routerID: "192.168.2.2s"
+            localPort: 1790
+            peers:
+                - name: "peer-{{ spellbook_global_asn }}-tor1"
+                  localAddress: fd00:10:0:2::2
 
 # -- Configure BGP Peers (Legacy v1.16+)
 cilium_bgp_peering_policies:
-  - name: "01-bgp-peering-policy"
-    spec:
-      virtualRouters:
-        - localASN: "{{ spellbook_global_asn }}"
-          exportPodCIDR: true
-          neighbors:
-          - peerAddress: '{{ ansible_default_ipv4.gateway|ansible.utils.ipmath(+252) }}/24'
-            peerASN: "{{ spellbook_global_asn }}"
-          serviceSelector:
-              matchExpressions:
-              - {key: somekey, operator: NotIn, values: ['never-used-value']}
+    - name: "01-bgp-peering-policy"
+      spec:
+          virtualRouters:
+              - localASN: "{{ spellbook_global_asn }}"
+                exportPodCIDR: true
+                neighbors:
+                    - peerAddress: "{{ ansible_default_ipv4.gateway }}/24"
+                      peerASN: "{{ spellbook_global_asn }}"
+                    - peerAddress: "{{ ansible_default_ipv4.gateway|ansible.utils.ipmath(-1) }}/24"
+                      peerASN: "{{ spellbook_global_asn }}"
+                serviceSelector:
+                    matchExpressions:
+                        - {
+                              key: somekey,
+                              operator: NotIn,
+                              values: ["never-used-value"],
+                          }
 
 # -- Configure whether direct routing mode should route traffic via
 # host stack (true) or directly and more efficiently out of BPF (false) if
 # the kernel supports it. The latter has the implication that it will also
 # bypass netfilter in the host namespace.
-cilium_enable_host_legacy_routing: true 
+cilium_enable_host_legacy_routing: true
 
 # -- Enable use of the remote node identity.
 # ref: https://docs.cilium.io/en/v1.7/install/upgrade/#configmap-remote-node-identity

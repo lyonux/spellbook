@@ -1,12 +1,23 @@
 ---
-
 peers:
-  - router_id: "{{ ansible_default_ipv4.gateway|ansible.utils.ipmath(+252) }}"
-    as: "{{ global_as_num }}"
-    scope: global
-    filters: []
-    numallowedlocalasnumbers: 0
-    sourceaddress: "None"
+    - router_id: "{{ ansible_default_ipv4.gateway }}"
+      as: "{{ global_as_num }}"
+      scope: global
+      filters: []
+      numallowedlocalasnumbers: 0
+      sourceaddress: "None"
+    - router_id: "{{ ansible_default_ipv4.gateway|ansible.utils.ipmath(-1) }}"
+      as: "{{ global_as_num }}"
+      scope: global
+      filters: []
+      numallowedlocalasnumbers: 0
+      sourceaddress: "None"
+    - router_id: "{{ ansible_default_ipv4.gateway|ansible.utils.ipmath(-2) }}"
+      as: "{{ global_as_num }}"
+      scope: global
+      filters: []
+      numallowedlocalasnumbers: 0
+      sourceaddress: "None"
 
 # Set calico network backend: "bird", "vxlan" or "none"
 # bird enable BGP routing, required for ipip and no encapsulation modes
@@ -18,10 +29,10 @@ local_as: "{{ spellbook_global_asn }}"
 
 # IP in IP and VXLAN is mutually exclusive modes.
 # set IP in IP encapsulation mode: "Always", "CrossSubnet", "Never"
-calico_ipip_mode: 'Never'
+calico_ipip_mode: "Never"
 
 # set VXLAN encapsulation mode: "Always", "CrossSubnet", "Never"
-calico_vxlan_mode: 'Never'
+calico_vxlan_mode: "Never"
 
 # see roles/network_plugin/calico/defaults/main.yml
 
@@ -33,7 +44,7 @@ calico_cni_name: k8s-pod-network
 ## The subnets of each nodes will be distributed by the datacenter router
 peer_with_router: true
 
-# Enable eBPF mode  
+# Enable eBPF mode
 calico_bpf_enabled: true
 
 # Valid option for service mode: Tunnel (default), DSR=Direct Server Return
@@ -115,13 +126,9 @@ calico_advertise_cluster_ips: false
 # Set max typha connections
 # typha_max_connections_lower_limit: 300
 
-
-
 # set VXLAN port and VNI
 # calico_vxlan_vni: 4096
 # calico_vxlan_port: 4789
-
-
 
 # If you want to use non default IP_AUTODETECTION_METHOD, IP6_AUTODETECTION_METHOD for calico node set this option to one of:
 # * can-reach=DESTINATION

@@ -14,7 +14,7 @@ s1-r1 ansible_host=192.168.1.254
 #[kube_cluster:vars]
 #cluster_id="192.168.1.1"
 #calico_rr_id=rr1
-#calico_group_id=rr1 
+#calico_group_id=rr1
 
 [dnsmaster]
 s1-p-101 ansible_host=192.168.1.101
@@ -31,12 +31,19 @@ kube_control_plane
 kube_node
 
 [kube_control_plane]
-s1-k1-m1 ansible_host=192.168.1.1
+s1-k1-m1
+s1-k1-m2
+s1-k1-m3
+
 
 [kube_node]
+s1-k1-06
 
 [etcd]
 s1-k1-m1
+s1-k1-m2
+s1-k1-m3
+
 
 [offline]
 s1-p-102

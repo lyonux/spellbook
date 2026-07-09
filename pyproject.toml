@@ -1,0 +1,29 @@
+[project]
+name = "spellbook"
+version = "0.1.0"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+    "ansible>=11.0.0,<12.0.0",
+    "ansible-lint",
+    "mitogen",
+    "yamllint",
+    "flake8",
+    "pyghmi",
+    "cryptography",
+    "jinja2",
+    "netaddr",
+    "pbr",
+    "jmespath",
+    "ruamel.yaml",
+    "ruamel.yaml.clib",
+    "MarkupSafe",
+    "setuptools<72",
+]
+
+[dependency-groups]
+dev = []
+
+[tool.uv.workspace]
+members = [
+    "spellbook",
+]

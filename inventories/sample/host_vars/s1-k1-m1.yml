@@ -1,0 +1,11 @@
+---
+node_labels:
+    "node-role.kubernetes.io/master": ""
+node_taints:
+    - "node.kubernetes.io/unschedulable=:NoSchedule"
+
+# in incus container
+sysctl_tuning: false
+kubelet_protect_kernel_defaults: false
+kubeadm_ignore_preflight_errors:
+    - SystemVerification

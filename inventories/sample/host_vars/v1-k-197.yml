@@ -1,6 +1,0 @@
----
-
-node_labels:
-  "node-role.kubernetes.io/node": ""
-node_taints:
-- "node.kubernetes.io/unschedulable=:NoSchedule"

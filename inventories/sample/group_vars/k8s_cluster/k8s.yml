@@ -1,16 +1,15 @@
 ---
-
 # Minimal memory requirement in MB for safety checks
 minimal_node_memory_mb: 1024
 minimal_master_memory_mb: 1024
 
 kubelet_config_extra_args:
-  evictionHard:
-    memory.available: "128Mi"
-  evictionSoftGracePeriod:
-    memory.available: "30s"
-  evictionSoft:
-    memory.available: "256Mi"
+    evictionHard:
+        memory.available: "128Mi"
+    evictionSoftGracePeriod:
+        memory.available: "30s"
+    evictionSoft:
+        memory.available: "256Mi"
 
 # Kubernetes configuration dirs and system namespace.
 # Those are where all the additional config stuff goes
@@ -30,7 +29,7 @@ kube_token_dir: "{{ kube_config_dir }}/tokens"
 kube_api_anonymous_auth: true
 
 ## Change this to use another Kubernetes version, e.g. a current beta release
-kube_version: v1.31.4
+#kube_version: "{{ (kubelet_checksums['amd64'] | dict2items)[0].key }}"
 
 # Where the binaries will be downloaded.
 # Note: ensure that you've enough disk space (about 1G)
@@ -54,7 +53,6 @@ credentials_dir: "{{ inventory_dir }}/credentials"
 ## It is possible to activate / deactivate selected authentication methods (oidc, static token auth)
 # kube_oidc_auth: false
 # kube_token_auth: false
-
 
 ## Variables for OpenID Connect Configuration https://kubernetes.io/docs/admin/authentication/
 ## To use OpenID you have to deploy additional an OpenID Provider (e.g Dex, Keycloak, ...)
@@ -80,7 +78,7 @@ credentials_dir: "{{ inventory_dir }}/credentials"
 
 # Choose network plugin (cilium, calico, kube-ovn, weave or flannel. Use cni for generic cni plugin)
 # Can also be set to 'cloud', which lets the cloud provider setup appropriate routing
-kube_network_plugin: cilium
+kube_network_plugin: calico
 
 # Setting multi_networking to true will install Multus: https://github.com/k8snetworkplumbingwg/multus-cni
 kube_network_plugin_multus: false
@@ -131,7 +129,7 @@ kube_network_node_prefix_ipv6: 120
 
 # The port the API Server will be listening on.
 kube_apiserver_ip: "{{ kube_service_addresses | ansible.utils.ipaddr('net') | ansible.utils.ipaddr(1) | ansible.utils.ipaddr('address') }}"
-kube_apiserver_port: 6443  # (https)
+kube_apiserver_port: 6443 # (https)
 
 # Kube-proxy proxyMode configuration.
 # Can be ipvs, iptables
@@ -146,11 +144,11 @@ kube_proxy_strict_arp: false
 # The default empty string slice ([]) means to use all local addresses.
 # kube_proxy_nodeport_addresses_cidr is retained for legacy config
 kube_proxy_nodeport_addresses: >-
-  {%- if kube_proxy_nodeport_addresses_cidr is defined -%}
-  [{{ kube_proxy_nodeport_addresses_cidr }}]
-  {%- else -%}
-  []
-  {%- endif -%}
+    {%- if kube_proxy_nodeport_addresses_cidr is defined -%}
+    [{{ kube_proxy_nodeport_addresses_cidr }}]
+    {%- else -%}
+    []
+    {%- endif -%}
 
 # If non-empty, will use this string as identification instead of the actual hostname
 # kube_override_hostname: {{ inventory_hostname }}
@@ -173,8 +171,8 @@ dns_timeout: 2
 dns_attempts: 2
 # Custom search domains to be added in addition to the default cluster search domains
 searchdomains:
-  - svc.{{ cluster_name }}
-  - default.svc.{{ cluster_name }}
+    - svc.{{ cluster_name }}
+    - default.svc.{{ cluster_name }}
 # Remove default cluster search domains (``default.svc.{{ dns_domain }}, svc.{{ dns_domain }}``).
 remove_default_searchdomains: true
 # Can be coredns, coredns_dual, manual or none
