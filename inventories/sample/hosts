@@ -38,11 +38,11 @@ s1-k1-m3
 
 [kube_node]
 s1-k1-06
+s1-k1-07
+s1-k1-08
 
 [etcd]
 s1-k1-m1
-s1-k1-m2
-s1-k1-m3
 
 
 [offline]

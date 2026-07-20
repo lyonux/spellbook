@@ -1,26 +1,25 @@
 ---
-
 - hosts:
-  - k8s_cluster
+      - k8s_cluster
   pre_tasks:
-  - name: Wait for the BGP neighbor
-    wait_for:
-      host: "{{ item.router_id }}"
-      port: 179
-      state: started
-      timeout: 1
-    register: wait_for_result
-    ignore_errors: yes
-    loop: "{{ peers }}"
-    when:
-      - peers is defined
-  - name: Assert the BGP neighbor | You may set bgp peer config 
-    assert:
-      that:
-      - wait_for_result.results|select('succeeded')|list is not empty
-      msg: "At least one BGP peer is expected to be accessible."
-    when:
-      - peers is defined
+      - name: Wait for the BGP neighbor
+        wait_for:
+            host: "{{ item.router_id }}"
+            port: 179
+            state: started
+            timeout: 1
+        register: wait_for_result
+        ignore_errors: yes
+        loop: "{{ peers }}"
+        when:
+            - peers is defined
+      - name: Assert the BGP neighbor | You may set bgp peer config
+        assert:
+            that:
+                - wait_for_result.results|select('succeeded')|list is not empty
+            msg: "At least one BGP peer is expected to be accessible."
+        when:
+            - peers is defined
 
 - name: Common tasks for every playbooks
   import_playbook: boilerplate.yml
@@ -34,12 +33,19 @@
   any_errors_fatal: "{{ any_errors_fatal | default(true) }}"
   environment: "{{ proxy_disable_env }}"
   roles:
-    - { role: kubespray-defaults }
-    - { role: kubernetes/preinstall, tags: preinstall }
-    - { role: "container-engine", tags: "container-engine", when: deploy_container_engine }
-    - { role: download, tags: download, when: "not skip_downloads" }
+      - { role: kubespray_defaults }
+      - { role: kubernetes/preinstall, tags: preinstall }
+      - {
+            role: "container-engine",
+            tags: "container-engine",
+            when: deploy_container_engine,
+        }
+      - { role: download, tags: download, when: "not skip_downloads" }
 
 - name: Install etcd
+  vars:
+      etcd_cluster_setup: true
+      etcd_events_cluster_setup: "{{ etcd_events_cluster_enabled }}"
   import_playbook: install_etcd.yml
 
 - name: Install Kubernetes nodes
@@ -48,8 +54,8 @@
   any_errors_fatal: "{{ any_errors_fatal | default(true) }}"
   environment: "{{ proxy_disable_env }}"
   roles:
-    - { role: kubespray-defaults }
-    - { role: kubernetes/node, tags: node }
+      - { role: kubespray_defaults }
+      - { role: kubernetes/node, tags: node }
 
 - name: Install the control plane
   hosts: kube_control_plane
@@ -57,10 +63,10 @@
   any_errors_fatal: "{{ any_errors_fatal | default(true) }}"
   environment: "{{ proxy_disable_env }}"
   roles:
-    - { role: kubespray-defaults }
-    - { role: kubernetes/control-plane, tags: master }
-    - { role: kubernetes/client, tags: client }
-    - { role: kubernetes-apps/cluster_roles, tags: cluster-roles }
+      - { role: kubespray_defaults }
+      - { role: kubernetes/control-plane, tags: control-plane }
+      - { role: kubernetes/client, tags: client }
+      - { role: kubernetes-apps/cluster_roles, tags: cluster-roles }
 
 - name: Invoke kubeadm and install a CNI
   hosts: k8s_cluster
@@ -68,12 +74,12 @@
   any_errors_fatal: "{{ any_errors_fatal | default(true) }}"
   environment: "{{ proxy_disable_env }}"
   roles:
-    - { role: kubespray-defaults }
-    - { role: kubernetes/kubeadm, tags: kubeadm}
-    - { role: kubernetes/node-label, tags: node-label }
-    - { role: kubernetes/node-taint, tags: node-taint }
-    - { role: network_plugin, tags: network }
-    - { role: kubernetes-apps/kubelet-csr-approver, tags: kubelet-csr-approver }
+      - { role: kubespray_defaults }
+      - { role: kubernetes/kubeadm, tags: kubeadm }
+      - { role: kubernetes/node-label, tags: node-label }
+      - { role: kubernetes/node-taint, tags: node-taint }
+      - { role: kubernetes-apps/common_crds }
+      - { role: network_plugin, tags: network }
 
 - name: Install Calico Route Reflector
   hosts: calico_rr
@@ -81,8 +87,8 @@
   any_errors_fatal: "{{ any_errors_fatal | default(true) }}"
   environment: "{{ proxy_disable_env }}"
   roles:
-    - { role: kubespray-defaults }
-    - { role: network_plugin/calico/rr, tags: ['network', 'calico_rr'] }
+      - { role: kubespray_defaults }
+      - { role: network_plugin/calico/rr, tags: ["network", "calico_rr"] }
 
 - name: Patch Kubernetes for Windows
   hosts: kube_control_plane[0]
@@ -90,8 +96,11 @@
   any_errors_fatal: "{{ any_errors_fatal | default(true) }}"
   environment: "{{ proxy_disable_env }}"
   roles:
-    - { role: kubespray-defaults }
-    - { role: win_nodes/kubernetes_patch, tags: ["master", "win_nodes"] }
+      - { role: kubespray_defaults }
+      - {
+            role: win_nodes/kubernetes_patch,
+            tags: ["control-plane", "win_nodes"],
+        }
 
 - name: Install Kubernetes apps
   hosts: kube_control_plane
@@ -99,13 +108,18 @@
   any_errors_fatal: "{{ any_errors_fatal | default(true) }}"
   environment: "{{ proxy_disable_env }}"
   roles:
-    - { role: kubespray-defaults }
-    - { role: kubernetes-apps/external_cloud_controller, tags: external-cloud-controller }
-    - { role: network_plugin, tags: network }
-    - { role: kubernetes-apps/policy_controller, tags: policy-controller }
-    - { role: kubernetes-apps/ingress_controller, tags: ingress-controller }
-    - { role: kubernetes-apps/external_provisioner, tags: external-provisioner }
-    - { role: kubernetes-apps, tags: apps }
+      - { role: kubespray_defaults }
+      - {
+            role: kubernetes-apps/external_cloud_controller,
+            tags: external-cloud-controller,
+        }
+      - { role: kubernetes-apps/policy_controller, tags: policy-controller }
+      - { role: kubernetes-apps/ingress_controller, tags: ingress-controller }
+      - {
+            role: kubernetes-apps/external_provisioner,
+            tags: external-provisioner,
+        }
+      - { role: kubernetes-apps, tags: apps }
 
 - name: Apply resolv.conf changes now that cluster DNS is up
   hosts: k8s_cluster
@@ -113,14 +127,10 @@
   any_errors_fatal: "{{ any_errors_fatal | default(true) }}"
   environment: "{{ proxy_disable_env }}"
   roles:
-    - { role: kubespray-defaults }
-    - { role: kubernetes/preinstall, when: "dns_mode != 'none' and resolvconf_mode == 'host_resolvconf'", tags: resolvconf, dns_late: true }
-
-- name: Set alias kc with 'kubectl'
-  hosts: kube_control_plane
-  tasks:
-    - name: Set alias kc with 'kubectl' to .bashrc
-      lineinfile:
-        path: /root/.bashrc
-        line: "alias kc='kubectl'"
-        state: present
+      - { role: kubespray_defaults }
+      - {
+            role: kubernetes/preinstall,
+            when: "dns_mode != 'none' and resolvconf_mode == 'host_resolvconf'",
+            tags: resolvconf,
+            dns_late: true,
+        }
