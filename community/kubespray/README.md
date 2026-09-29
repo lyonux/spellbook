@@ -22,7 +22,7 @@ Ensure you have installed Docker then
 ```ShellSession
 docker run --rm -it --mount type=bind,source="$(pwd)"/inventory/sample,dst=/inventory \
   --mount type=bind,source="${HOME}"/.ssh/id_rsa,dst=/root/.ssh/id_rsa \
-  quay.io/kubespray/kubespray:v2.30.0 bash
+  quay.io/kubespray/kubespray:v2.31.0 bash
 # Inside the container you may now run the kubespray playbooks:
 ansible-playbook -i /inventory/inventory.ini --private-key /root/.ssh/id_rsa cluster.yml
 ```
@@ -87,12 +87,12 @@ vagrant up
 ## Supported Linux Distributions
 
 - **Flatcar Container Linux by Kinvolk**
-- **Debian** Bookworm, Bullseye, Trixie
-- **Ubuntu** 22.04, 24.04
+- **Debian** Bookworm, Trixie
+- **Ubuntu** 22.04, 24.04, 26.04
 - **CentOS Stream / RHEL** 9, 10
 - **Fedora** 39, 40, 41, 42
 - **Fedora CoreOS** (see [fcos Note](docs/operating_systems/fcos.md))
-- **openSUSE** Leap 15.x/Tumbleweed
+- **openSUSE** Leap 16.x/Tumbleweed/MicroOS (containerd only; see [openSUSE notes](docs/operating_systems/opensuse.md))
 - **Oracle Linux** 9, 10
 - **Alma Linux** 9, 10
 - **Rocky Linux** 9, 10 (experimental in 10: see [Rocky Linux 10 notes](docs/operating_systems/rhel.md#rocky-linux-10))
@@ -111,25 +111,25 @@ Note:
 <!-- BEGIN ANSIBLE MANAGED BLOCK -->
 
 - Core
-  - [kubernetes](https://github.com/kubernetes/kubernetes) 1.35.4
-  - [etcd](https://github.com/etcd-io/etcd) 3.6.10
+  - [kubernetes](https://github.com/kubernetes/kubernetes) 1.36.4
+  - [etcd](https://github.com/etcd-io/etcd) 3.6.14
   - [docker](https://www.docker.com/) 28.3
-  - [containerd](https://containerd.io/) 2.2.3
-  - [cri-o](http://cri-o.io/) 1.35.0 (experimental: see [CRI-O Note](docs/CRI/cri-o.md). Only on fedora, ubuntu and centos based OS)
+  - [containerd](https://containerd.io/) 2.3.5
+  - [cri-o](https://cri-o.io/) 1.36.5 (experimental: see [CRI-O Note](docs/CRI/cri-o.md). Only on fedora, ubuntu and centos based OS)
 - Network Plugin
   - [cni-plugins](https://github.com/containernetworking/plugins) 1.9.1
-  - [calico](https://github.com/projectcalico/calico) 3.31.5
-  - [cilium](https://github.com/cilium/cilium) 1.19.3
-  - [flannel](https://github.com/flannel-io/flannel) 0.28.4
+  - [calico](https://github.com/projectcalico/calico) 3.31.7
+  - [cilium](https://github.com/cilium/cilium) 1.20.2
+  - [flannel](https://github.com/flannel-io/flannel) 0.28.9
   - [kube-ovn](https://github.com/alauda/kube-ovn) 1.12.21
   - [kube-router](https://github.com/cloudnativelabs/kube-router) 2.1.1
   - [multus](https://github.com/k8snetworkplumbingwg/multus-cni) 4.2.2
   - [kube-vip](https://github.com/kube-vip/kube-vip) 1.0.3
 - Application
   - [cert-manager](https://github.com/jetstack/cert-manager) 1.15.3
-  - [coredns](https://github.com/coredns/coredns) 1.12.4
+  - [coredns](https://github.com/coredns/coredns) 1.14.2
   - [argocd](https://argoproj.github.io/) 2.14.5
-  - [helm](https://helm.sh/) 3.18.4
+  - [helm](https://helm.sh/) 3.22.0
   - [metallb](https://metallb.universe.tf/) 0.13.9
   - [registry](https://github.com/distribution/distribution) 2.8.1
 - Storage Plugin
@@ -137,19 +137,20 @@ Note:
   - [azure-csi-plugin](https://github.com/kubernetes-sigs/azuredisk-csi-driver) 1.10.0
   - [cinder-csi-plugin](https://github.com/kubernetes/cloud-provider-openstack/blob/master/docs/cinder-csi-plugin/using-cinder-csi-plugin.md) 1.30.0
   - [gcp-pd-csi-plugin](https://github.com/kubernetes-sigs/gcp-compute-persistent-disk-csi-driver) 1.9.2
-  - [local-path-provisioner](https://github.com/rancher/local-path-provisioner) 0.0.32
+  - [local-path-provisioner](https://github.com/rancher/local-path-provisioner) 0.0.37
   - [local-volume-provisioner](https://github.com/kubernetes-sigs/sig-storage-local-static-provisioner) 2.5.0
-  - [node-feature-discovery](https://github.com/kubernetes-sigs/node-feature-discovery) 0.16.4
+  - [node-feature-discovery](https://github.com/kubernetes-sigs/node-feature-discovery) 0.19.0
 
 <!-- END ANSIBLE MANAGED BLOCK -->
 
 ## Container Runtime Notes
 
-- The cri-o version should be aligned with the respective kubernetes version (i.e. kube_version=1.20.x, crio_version=1.20)
+- The CRI-O minor version should match the Kubernetes minor version.
 
 ## Requirements
 
-- **Minimum required version of Kubernetes is v1.30**
+- **Minimum required version of Kubernetes is v1.34.0**
+
 - **Ansible v2.14+, Jinja 2.11+ and python-netaddr is installed on the machine that will run Ansible commands**
 - The target servers must have **access to the Internet** in order to pull docker images. Otherwise, additional configuration is required (See [Offline Environment](docs/operations/offline-environment.md))
 - The target servers are configured to allow **IPv4 forwarding**.
