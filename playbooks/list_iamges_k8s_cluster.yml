@@ -3,14 +3,42 @@
   gather_facts: true
   any_errors_fatal: true
   roles:
-    - { role: community/kubespray/roles/kubespray-defaults }
+    - { role: community/kubespray/roles/kubespray_defaults }
   tasks:
+    - name: Build list of kubeadm control-plane images
+      # Same images as `kubeadm config images list` in
+      # roles/download/tasks/prep_kubeadm_images.yml, but constructed
+      # statically so kubeadm does not need to be installed yet.
+      # coredns and pause are already covered by the downloads dict.
+      set_fact:
+        kubeadm_control_plane_images:
+          kube_apiserver:
+            enabled: true
+            container: true
+            repo: "{{ kubeadm_image_repo }}/kube-apiserver"
+            tag: "v{{ kube_version }}"
+          kube_controller_manager:
+            enabled: true
+            container: true
+            repo: "{{ kubeadm_image_repo }}/kube-controller-manager"
+            tag: "v{{ kube_version }}"
+          kube_scheduler:
+            enabled: true
+            container: true
+            repo: "{{ kubeadm_image_repo }}/kube-scheduler"
+            tag: "v{{ kube_version }}"
+          kube_proxy:
+            enabled: true
+            container: true
+            repo: "{{ kube_proxy_image_repo }}"
+            tag: "v{{ kube_version }}"
+
     - name: List all container images
       debug:
-        msg: "{{ item.value.repo | default('N/A') }}:{{ item.value.tag | default('N/A') }}"
-      loop: "{{ downloads | dict2items }}"
+        msg: "{{ item.value.repo }}:{{ item.value.tag }}"
+      loop: "{{ downloads | combine(kubeadm_control_plane_images) | dict2items }}"
       when:
         - item.value.enabled | default(false) | bool
+        - item.value.container | default(false) | bool
       loop_control:
         label: "{{ item.key }}"
-      register: image_list
